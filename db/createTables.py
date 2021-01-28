@@ -18,6 +18,7 @@ def createTables():
 
     tableContasBancarias = """CREATE TABLE IF NOT EXISTS CONTASBANCARIAS (
         ID int NOT NULL AUTO_INCREMENT,
+        SALDO int(15) DEFAULT "0",
         PRIMARY KEY (ID)
     );
     """
