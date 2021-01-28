@@ -29,7 +29,7 @@ def registerStrategy():
 
 
 def loginStrategy():
-    from db.selectInDB import selectPasswordInDB
+    from db.selectInDB import selectPasswordInDB, selectNameInDB
     from clear import clear
     import globals
     clear()
@@ -54,15 +54,25 @@ def loginStrategy():
         print("Senha inválida ou e-mail inválido.")
 
 
-print("-----JJBANK-----")
-print("1-Cadastro")
-print("2-Login")
-condicao1 = int(input(":"))
+exec = True
 
-if (condicao1 == 1):
-    context(registerStrategy())
-    context(loginStrategy())
-elif (condicao1 == 2):
-    context(loginStrategy())
+while (exec):
+    print("-----JJBANK-----")
+    print("1-Cadastro")
+    print("2-Login")
+
+    try:
+        condicao1 = int(input(":"))
+
+        if (condicao1 == 1):
+            context(registerStrategy())
+            context(loginStrategy())
+        elif (condicao1 == 2):
+            context(loginStrategy())
+        else:
+            print("Opção inválida.")
+    except ValueError:
+        print("Opção inválida.")
+
 
 # selectInDB()
