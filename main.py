@@ -48,7 +48,7 @@ def loginStrategy():
         print(
             f"Usuário {globals.NAME} logado com o e-mail \"{globals.EMAIL}\".")
 
-        from options import options
+        from optionsAccount import options
         options()
     else:
         print("Senha inválida ou e-mail inválido.")
