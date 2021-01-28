@@ -41,5 +41,4 @@ def createTables():
     cursor.execute(tableContasBancarias)
     cursor.execute(tableUsers)
 
-    cursor.execute
     dbConnection.close()
