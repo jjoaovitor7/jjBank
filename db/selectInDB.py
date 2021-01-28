@@ -18,12 +18,12 @@ def selectInDB():
     dbConnection.close()
 
 
-def selectEmailInDB(email):
+def selectEmailInDB(_email):
     dbConnection = pymysql.connect(
         host="localhost", user="root", password="123456789", database="test")
     cursor = dbConnection.cursor()
 
-    selectTableUsersEmail = f"""SELECT * FROM USERS WHERE EMAIL = "{email}";"""
+    selectTableUsersEmail = f"""SELECT * FROM USERS WHERE EMAIL = "{_email}";"""
 
     cursor.execute(selectTableUsersEmail)
     print(cursor.fetchall())
@@ -31,14 +31,28 @@ def selectEmailInDB(email):
     dbConnection.close()
 
 
-def selectNameInDB(email):
+def selectNameInDB(_email):
     dbConnection = pymysql.connect(
         host="localhost", user="root", password="123456789", database="test")
     cursor = dbConnection.cursor()
 
-    selectTableUsersName = f"""SELECT NOME FROM USERS WHERE EMAIL = "{email}";"""
+    selectTableUsersName = f"""SELECT NOME FROM USERS WHERE EMAIL = "{_email}";"""
 
     cursor.execute(selectTableUsersName)
+    fetch = cursor.fetchall()
+
+    dbConnection.close()
+    return fetch
+
+
+def selectPasswordInDB(_email):
+    dbConnection = pymysql.connect(
+        host="localhost", user="root", password="123456789", database="test")
+    cursor = dbConnection.cursor()
+
+    selectTableUsersEP = f"""SELECT SENHA FROM USERS WHERE EMAIL = "{_email}";"""
+
+    cursor.execute(selectTableUsersEP)
     fetch = cursor.fetchall()
 
     dbConnection.close()
