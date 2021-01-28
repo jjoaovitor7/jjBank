@@ -57,9 +57,10 @@ def loginStrategy():
 exec = True
 
 while (exec):
-    print("-----JJBANK-----")
-    print("1-Cadastro")
-    print("2-Login")
+    print("-----JJBANK-----"
+          + "\n1-Cadastro"
+          + "\n2-Login"
+          + "\n3-Sair")
 
     try:
         condicao1 = int(input(":"))
@@ -69,10 +70,10 @@ while (exec):
             context(loginStrategy())
         elif (condicao1 == 2):
             context(loginStrategy())
+        elif (condicao1 == 3):
+            exec = False
+            break
         else:
             print("Opção inválida.")
     except ValueError:
         print("Opção inválida.")
-
-
-# selectInDB()
