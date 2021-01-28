@@ -7,17 +7,15 @@
 # from db.showTables import showTables
 # showTables()
 
-from db.selectInDB import selectInDB, selectEmailInDB, selectNameInDB, selectPasswordInDB
 import bcrypt
-print("----JJBANK----")
-print("1-Cadastro")
-print("2-Login")
-condicao1 = int(input(":"))
 
-if (condicao1 == 1):
+def context(strategy):
+    return strategy
+
+def registerStrategy():
     from clear import clear
     clear()
-    print("----CADASTRO----")
+    print("-----CADASTRO-----")
 
     name = str(input("Nome: "))
     email = str(input("E-mail: "))
@@ -27,11 +25,13 @@ if (condicao1 == 1):
     insertInDB(name, email, bcrypt.hashpw(
         str.encode(password), bcrypt.gensalt()))
 
-elif (condicao1 == 2):
+
+def loginStrategy():
+    from db.selectInDB import selectPasswordInDB
     from clear import clear
     import globals
     clear()
-    print("----LOGIN----")
+    print("-----LOGIN-----")
 
     email = str(input("E-mail: "))
     password = str(input("Senha: "))
@@ -42,5 +42,25 @@ elif (condicao1 == 2):
             "(('", "").replace("',),)", "")
         globals.EMAIL = email
 
-        print(f"Usuário {globals.NAME} logado com o e-mail \"{globals.EMAIL}\".")
+        clear()
+        print(
+            f"Usuário {globals.NAME} logado com o e-mail \"{globals.EMAIL}\".")
+
+        from options import options
+        options()
+    else:
+        print("Senha inválida ou e-mail inválido.")
+
+
+print("-----JJBANK-----")
+print("1-Cadastro")
+print("2-Login")
+condicao1 = int(input(":"))
+
+if (condicao1 == 1):
+    context(registerStrategy())
+    context(loginStrategy())
+elif (condicao1 == 2):
+    context(loginStrategy())
+
 # selectInDB()
