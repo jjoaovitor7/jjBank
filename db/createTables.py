@@ -11,6 +11,7 @@ def createTables():
         ID int(5) NOT NULL AUTO_INCREMENT PRIMARY KEY,
         NOME varchar(100) NOT NULL,
         EMAIL varchar(50) NOT NULL,
+        SENHA varchar(65) NOT NULL,
         FK_ID_BANCO int(5) DEFAULT NULL,
         CONSTRAINT FK_1 FOREIGN KEY (`FK_ID_BANCO`) REFERENCES `CONTASBANCARIAS`(`ID`) ON UPDATE CASCADE
     );
