@@ -7,7 +7,7 @@
 # from db.showTables import showTables
 # showTables()
 
-from db.selectInDB import selectInDB, selectEmailInDB
+from db.selectInDB import selectInDB, selectEmailInDB, selectNameInDB
 print("----JJBANK----")
 print("1-Cadastro")
 print("2-Login")
@@ -25,9 +25,13 @@ if (condicao1 == 1):
 
 elif (condicao1 == 2):
     from clear import clear
+    import globals
     clear()
     print("----LOGIN----")
     email = str(input("E-mail: "))
-    selectEmailInDB(email)
-    
+
+    globals.NAME  = str(selectNameInDB(email)).replace("(('", "").replace("',),)", "")
+    globals.EMAIL = email
+
+    print(f"Usuário {globals.NAME} logado com o e-mail \"{globals.EMAIL}\".")
 # selectInDB()

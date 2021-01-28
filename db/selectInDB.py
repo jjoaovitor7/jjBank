@@ -29,3 +29,17 @@ def selectEmailInDB(email):
     print(cursor.fetchall())
 
     dbConnection.close()
+
+
+def selectNameInDB(email):
+    dbConnection = pymysql.connect(
+        host="localhost", user="root", password="123456789", database="test")
+    cursor = dbConnection.cursor()
+
+    selectTableUsersName = f"""SELECT NOME FROM USERS WHERE EMAIL = "{email}";"""
+
+    cursor.execute(selectTableUsersName)
+    fetch = cursor.fetchall()
+
+    dbConnection.close()
+    return fetch
