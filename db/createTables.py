@@ -7,22 +7,6 @@ def createTables():
         host="localhost", user="root", password="123456789", database="test")
     cursor = dbConnection.cursor()
 
-    # tableUsersPK = """
-    # ALTER TABLE USERS
-    # ADD PRIMARY KEY (ID);
-    # """
-
-    # tableContasBancariasPK = """
-    # ALTER TABLE CONTASBANCARIAS
-    # ADD PRIMARY KEY (ID)
-    # """
-
-    # tableUsersINDEX = """ALTER TABLE USERS ADD INDEX(ID);"""
-    # tableUsersFK = """ALTER TABLE USERS ADD FOREIGN KEY (FK_ID_BANCO) REFERENCES CONTASBANCARIAS(ID);"""
-
-    # tableContasBancariasINDEX = """ALTER TABLE CONTASBANCARIAS ADD INDEX(ID);"""
-    # tableContasBancariasFK = """ALTER TABLE CONTASBANCARIAS ADD FOREIGN KEY (FK_ID_USER) REFERENCES USERS(ID);"""
-
     tableUsers = """CREATE TABLE IF NOT EXISTS USERS (
         ID int(5) NOT NULL AUTO_INCREMENT PRIMARY KEY,
         NOME varchar(100) NOT NULL,
