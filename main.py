@@ -9,8 +9,10 @@
 
 import bcrypt
 
+
 def context(strategy):
     return strategy
+
 
 def registerStrategy():
     from clear import clear
