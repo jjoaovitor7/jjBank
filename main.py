@@ -7,7 +7,7 @@
 # from db.showTables import showTables
 # showTables()
 
-from db.selectInDB import selectInDB
+from db.selectInDB import selectInDB, selectEmailInDB
 print("----JJBANK----")
 print("1-Cadastro")
 print("2-Login")
@@ -23,4 +23,11 @@ if (condicao1 == 1):
     from db.insertInDB import insertInDB
     insertInDB(name, email)
 
-selectInDB()
+elif (condicao1 == 2):
+    from clear import clear
+    clear()
+    print("----LOGIN----")
+    email = str(input("E-mail: "))
+    selectEmailInDB(email)
+    
+# selectInDB()
