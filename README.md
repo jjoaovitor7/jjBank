@@ -10,7 +10,7 @@ Sistema de Banco com as funcionalidades:
 - Cadastrar usuário
 - Logar
 - Ver Perfil
-- Realizar Depósito (em desenvolvimento)
+- Realizar Depósito
 - Visualizar Saldo
 - Realizar Saque
 

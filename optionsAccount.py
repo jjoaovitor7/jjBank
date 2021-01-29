@@ -19,11 +19,17 @@ def doDepositStrategy():
     selectID = f"""SELECT ID FROM USERS WHERE EMAIL = "{globals.EMAIL}";"""
     cursor.execute(selectID)
     fetch = cursor.fetchall()
-    fetch = int(str(fetch).replace("((", "").replace(",),)", ""))
+    fetchID = int(str(fetch).replace("((", "").replace(",),)", ""))
 
     depositValue = float(input("Depósitar (R$): "))
 
-    insertContaBancaria = f"""UPDATE CONTASBANCARIAS SET SALDO="{depositValue}" WHERE ID = {fetch};"""
+    selectSaldo = f"""SELECT SALDO FROM CONTASBANCARIAS WHERE ID = {fetchID};"""
+    cursor.execute(selectSaldo)
+    fetchSaldo = cursor.fetchall()
+    deposit = float(str(fetchSaldo).replace(
+        "((", "").replace(",),)", "")) + depositValue
+
+    insertContaBancaria = f"""UPDATE CONTASBANCARIAS SET SALDO="{deposit}" WHERE ID = {fetchID};"""
     commit = f"""COMMIT;"""
 
     cursor.execute(insertContaBancaria)
@@ -50,7 +56,7 @@ def viewBalanceStrategy():
     dbConnection.close()
 
 
-def doWithdraw():
+def doWithdrawStrategy():
     dbConnection = pymysql.connect(
         host="localhost", user="root", password="123456789", database="test")
     cursor = dbConnection.cursor()
@@ -107,7 +113,7 @@ def options():
 
             elif (condicao2 == 4):
                 clear()
-                context(doWithdraw())
+                context(doWithdrawStrategy())
                 print("\n")
 
             elif (condicao2 == 5):
@@ -121,7 +127,3 @@ def options():
                 print("Opção inválida.")
         except ValueError:
             print("Opção inválida.")
-
-
-if __name__ == "__main__":
-    options()
