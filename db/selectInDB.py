@@ -26,9 +26,10 @@ def selectEmailInDB(_email):
     selectTableUsersEmail = f"""SELECT * FROM USERS WHERE EMAIL = "{_email}";"""
 
     cursor.execute(selectTableUsersEmail)
-    print(cursor.fetchall())
+    fetch = cursor.fetchall()
 
     dbConnection.close()
+    return fetch
 
 
 def selectNameInDB(_email):

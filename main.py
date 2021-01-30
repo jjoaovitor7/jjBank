@@ -16,6 +16,7 @@ def context(strategy):
 
 def registerStrategy():
     from clear import clear
+    from db.selectInDB import selectEmailInDB
     clear()
     print("-----CADASTRO-----")
 
@@ -24,8 +25,16 @@ def registerStrategy():
     password = str(input("Senha: "))
 
     from db.insertInDB import insertInDB
-    insertInDB(name, email, bcrypt.hashpw(
-        str.encode(password), bcrypt.gensalt()))
+
+    aux = selectEmailInDB(email)
+
+    if (len(aux) == 0):
+        insertInDB(name, email, bcrypt.hashpw(
+            str.encode(password), bcrypt.gensalt()))
+        context(loginStrategy())
+    else:
+        clear()
+        print("Esse e-mail já está cadastrado no sistema.\n")
 
 
 def loginStrategy():
@@ -67,7 +76,6 @@ while (exec):
 
         if (condicao1 == 1):
             context(registerStrategy())
-            context(loginStrategy())
         elif (condicao1 == 2):
             context(loginStrategy())
         elif (condicao1 == 3):
@@ -75,5 +83,8 @@ while (exec):
             break
         else:
             print("Opção inválida.")
-    except ValueError:
-        print("Opção inválida.")
+    except ValueError as error:
+        if (str(error) == "Invalid salt"):
+            print("Senha inválida ou e-mail inválido.\n")
+        else:
+            print("Opção inválida.\n")
