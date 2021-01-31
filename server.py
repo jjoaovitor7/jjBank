@@ -27,7 +27,6 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.data_string = self.rfile.read(
                 int(self.headers['Content-Length']))
 
-            verify = None
             if (str(self.data_string).replace("b'", "").replace("'", "") in usuarios_logados):
                 self.send_response(200, True)
                 self.end_headers()
@@ -40,12 +39,8 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         self.data_string = self.rfile.read(
             int(self.headers['Content-Length']))
 
-        # print(usuarios_logados)
-
         usuarios_logados.remove(
             str(self.data_string).replace("b'", "").replace("'", ""))
-
-        # print(usuarios_logados)
 
 
 httpd = socketserver.TCPServer((HOST, PORT), SimpleHTTPRequestHandler)
