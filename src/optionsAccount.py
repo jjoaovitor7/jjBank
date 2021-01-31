@@ -3,6 +3,7 @@ import pymysql
 from clear import clear
 import requests
 
+
 def context(strategy):
     return strategy
 
@@ -119,8 +120,12 @@ def options():
             elif (condicao2 == 5):
                 exec = False
 
-                requests.delete(
-                    "http://127.0.0.1:5000/", data=globals.TOKEN)
+                try:
+                    requests.delete(
+                        "http://127.0.0.1:5000/", data=globals.TOKEN)
+                except Exception as e:
+                    # print(e)
+                    print("Deslogado.")
 
                 globals.NAME = None
                 globals.TOKEN = None
