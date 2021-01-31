@@ -1,7 +1,7 @@
 import globals
 import pymysql
 from clear import clear
-
+import requests
 
 def context(strategy):
     return strategy
@@ -118,8 +118,14 @@ def options():
 
             elif (condicao2 == 5):
                 exec = False
+
+                requests.delete(
+                    "http://127.0.0.1:5000/", data=globals.TOKEN)
+
                 globals.NAME = None
+                globals.TOKEN = None
                 globals.EMAIL = None
+
                 print("\n")
                 return None
 

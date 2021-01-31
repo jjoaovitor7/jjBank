@@ -8,6 +8,7 @@
 # showTables()
 
 import bcrypt
+import requests
 
 
 def context(strategy):
@@ -53,12 +54,22 @@ def loginStrategy():
             "(('", "").replace("',),)", "")
         globals.EMAIL = email
 
-        clear()
-        print(
-            f"Usuário {globals.NAME} logado com o e-mail \"{globals.EMAIL}\".")
+        try:
+            PORT = 5000
+            token = requests.post(f"http://127.0.0.1:{PORT}/").reason
+            globals.TOKEN = token
+            verify = requests.post(
+                f"http://127.0.0.1:{PORT}/verify", globals.TOKEN)
+            if (True):
+                clear()
+                print(
+                    f"Usuário {globals.NAME} logado com o e-mail \"{globals.EMAIL}\".")
 
-        from optionsAccount import options
-        options()
+                from optionsAccount import options
+                options()
+        except Exception as e:
+            print(e)
+
     else:
         print("Senha inválida ou e-mail inválido.")
 
