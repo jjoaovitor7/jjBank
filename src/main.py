@@ -58,9 +58,11 @@ def loginStrategy():
             PORT = 5000
             token = requests.post(f"http://127.0.0.1:{PORT}/").reason
             globals.TOKEN = token
+
             verify = requests.post(
-                f"http://127.0.0.1:{PORT}/verify", globals.TOKEN)
-            if (True):
+                f"http://127.0.0.1:{PORT}/verify", globals.TOKEN).reason
+
+            if (verify):
                 clear()
                 print(
                     f"Usuário {globals.NAME} logado com o e-mail \"{globals.EMAIL}\".")
