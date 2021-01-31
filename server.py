@@ -40,12 +40,12 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         self.data_string = self.rfile.read(
             int(self.headers['Content-Length']))
 
-        print(usuarios_logados)
+        # print(usuarios_logados)
 
         usuarios_logados.remove(
             str(self.data_string).replace("b'", "").replace("'", ""))
 
-        print(usuarios_logados)
+        # print(usuarios_logados)
 
 
 httpd = socketserver.TCPServer((HOST, PORT), SimpleHTTPRequestHandler)
