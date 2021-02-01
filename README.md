@@ -7,6 +7,7 @@
 ## :scroll: Sobre
 
 Sistema de Banco com as funcionalidades:
+
 - Cadastrar usuário
 - Logar
 - Ver Perfil
@@ -31,6 +32,13 @@ Sistema de Banco com as funcionalidades:
 
   // Entrar no diretório
   $ cd jjBank
+  $ cd dist
+
+  // (Linux)
+  // Executar o servidor
+  $ ./server
+  // Executar o programa
+  $ ./main
 ```
 
 ---
