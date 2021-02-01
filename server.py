@@ -11,6 +11,22 @@ PORT = 5000
 usuarios_logados = []
 
 
+def register(_name, _email, _password):
+    dbConnection = pymysql.connect(
+        host="localhost", user="root", password="123456789", database="test")
+    cursor = dbConnection.cursor()
+
+    insertContaBancaria = f"""INSERT INTO CONTASBANCARIAS () VALUES ();"""
+    insertUser = f"""INSERT INTO USERS (`NOME`, `EMAIL`, `FK_ID_BANCO`, SENHA) VALUES ("{_name}", "{_email}", LAST_INSERT_ID(), "{_password}");"""
+    commit = f"""COMMIT;"""
+
+    cursor.execute(insertContaBancaria)
+    cursor.execute(insertUser)
+    cursor.execute(commit)
+
+    dbConnection.close()
+
+
 def doDepositStrategy(email, depositValue):
     dbConnection = pymysql.connect(
         host="localhost", user="root", password="123456789", database="test")
@@ -94,6 +110,12 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             token = secrets.token_hex(16)
             usuarios_logados.append(token)
             self.send_response(200, token)
+            self.end_headers()
+
+        elif (self.path.startswith("/register")):
+            query = parse_qs(urlparse(self.path).query)
+            register(query['name'][0], query['email'][0], query['password'][0])
+            self.send_response(200)
             self.end_headers()
 
         elif (self.path.endswith("/verify")):

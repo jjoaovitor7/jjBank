@@ -1,11 +1,7 @@
-# from db.createTables import createTables
-# createTables()
-
-# from db.dropTables import dropTables
-# dropTables()
-
-# from db.showTables import showTables
-# showTables()
+# import db.tables as tables
+# tables.createTables
+# tables.dropTables
+# tables.showTables
 
 import bcrypt
 import requests
@@ -25,13 +21,11 @@ def registerStrategy():
     email = str(input("E-mail: "))
     password = str(input("Senha: "))
 
-    from db.insertInDB import insertInDB
-
     aux = selectEmailInDB(email)
 
     if (len(aux) == 0):
-        insertInDB(name, email, bcrypt.hashpw(
-            str.encode(password), bcrypt.gensalt()))
+        requests.post("http://127.0.0.1:5000/register", params={"name": name, "email": email, "password": bcrypt.hashpw(
+            str.encode(password), bcrypt.gensalt())})
         context(loginStrategy())
     else:
         clear()
