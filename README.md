@@ -6,7 +6,7 @@
 
 ## :scroll: Sobre
 
-Sistema de Banco com as funcionalidades:
+Sistema de Banco fictício com as funcionalidades:
 
 - Cadastrar usuário
 - Logar
