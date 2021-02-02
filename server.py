@@ -11,6 +11,96 @@ PORT = 5000
 usuarios_logados = []
 
 
+def createTables():
+    # pymsql.connect("host", "user", "password", "db")
+    dbConnection = pymysql.connect(
+        host="localhost", user="root", password="123456789", database="test")
+    cursor = dbConnection.cursor()
+
+    tableUsers = """CREATE TABLE IF NOT EXISTS USERS (
+        ID int(5) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        NOME varchar(100) NOT NULL,
+        EMAIL varchar(50) NOT NULL,
+        SENHA varchar(65) NOT NULL,
+        FK_ID_BANCO int(5) DEFAULT NULL,
+        CONSTRAINT FK_1 FOREIGN KEY (`FK_ID_BANCO`) REFERENCES `CONTASBANCARIAS`(`ID`) ON UPDATE CASCADE
+    );
+    """
+
+    tableContasBancarias = """CREATE TABLE IF NOT EXISTS CONTASBANCARIAS (
+        ID int NOT NULL AUTO_INCREMENT,
+        SALDO int(15) DEFAULT "0",
+        PRIMARY KEY (ID)
+    );
+    """
+
+    # tableUsers = """DROP TABLE USERS;"""
+    # tableContasBancarias = """DROP TABLE CONTASBANCARIAS;"""
+
+    cursor.execute(tableContasBancarias)
+    cursor.execute(tableUsers)
+
+    dbConnection.close()
+
+
+def showTables():
+    dbConnection = pymysql.connect(
+        host="localhost", user="root", password="123456789", database="test")
+    cursor = dbConnection.cursor()
+
+    tables = """SHOW TABLES;"""
+
+    cursor.execute(tables)
+    print(cursor.fetchall())
+
+    dbConnection.close()
+
+
+def dropTables():
+    dbConnection = pymysql.connect(
+        host="localhost", user="root", password="123456789", database="test")
+    cursor = dbConnection.cursor()
+
+    tableUsers = """DROP TABLE USERS;"""
+    tableContasBancarias = """DROP TABLE CONTASBANCARIAS;"""
+
+    cursor.execute(tableUsers)
+    cursor.execute(tableContasBancarias)
+
+    dbConnection.close()
+
+
+def selectInDB():
+    dbConnection = pymysql.connect(
+        host="localhost", user="root", password="123456789", database="test")
+    cursor = dbConnection.cursor()
+
+    selectTableUsers = f"""SELECT * FROM USERS;"""
+    selectTableContasBancarias = f"""SELECT * FROM CONTASBANCARIAS;"""
+
+    cursor.execute(selectTableUsers)
+    print(cursor.fetchall())
+
+    cursor.execute(selectTableContasBancarias)
+    print(cursor.fetchall())
+
+    dbConnection.close()
+
+
+def selectEmailInDB(_email):
+    dbConnection = pymysql.connect(
+        host="localhost", user="root", password="123456789", database="test")
+    cursor = dbConnection.cursor()
+
+    selectTableUsersEmail = f"""SELECT * FROM USERS WHERE EMAIL = "{_email}";"""
+
+    cursor.execute(selectTableUsersEmail)
+    fetch = cursor.fetchall()
+
+    dbConnection.close()
+    return fetch
+
+
 def register(_name, _email, _password):
     dbConnection = pymysql.connect(
         host="localhost", user="root", password="123456789", database="test")
@@ -103,6 +193,11 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         if (self.path.startswith("/viewbalance")):
             query = parse_qs(urlparse(self.path).query)
             self.send_response(200, viewBalanceStrategy(query['email'][0]))
+            self.end_headers()
+
+        elif (self.path.startswith("/emailverify")):
+            query = parse_qs(urlparse(self.path).query)
+            self.send_response(200, selectEmailInDB(query['email'][0]))
             self.end_headers()
 
     def do_POST(self):

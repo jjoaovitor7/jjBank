@@ -1,10 +1,33 @@
-# import db.tables as tables
-# tables.createTables
-# tables.dropTables
-# tables.showTables
-
 import bcrypt
 import requests
+import pymysql
+
+def selectNameInDB(_email):
+    dbConnection = pymysql.connect(
+        host="localhost", user="root", password="123456789", database="test")
+    cursor = dbConnection.cursor()
+
+    selectTableUsersName = f"""SELECT NOME FROM USERS WHERE EMAIL = "{_email}";"""
+
+    cursor.execute(selectTableUsersName)
+    fetch = cursor.fetchall()
+
+    dbConnection.close()
+    return fetch
+
+
+def selectPasswordInDB(_email):
+    dbConnection = pymysql.connect(
+        host="localhost", user="root", password="123456789", database="test")
+    cursor = dbConnection.cursor()
+
+    selectTableUsersEP = f"""SELECT SENHA FROM USERS WHERE EMAIL = "{_email}";"""
+
+    cursor.execute(selectTableUsersEP)
+    fetch = cursor.fetchall()
+
+    dbConnection.close()
+    return fetch
 
 
 def context(strategy):
@@ -13,7 +36,6 @@ def context(strategy):
 
 def registerStrategy():
     from clear import clear
-    from db.selectInDB import selectEmailInDB
     clear()
     print("-----CADASTRO-----")
 
@@ -21,9 +43,10 @@ def registerStrategy():
     email = str(input("E-mail: "))
     password = str(input("Senha: "))
 
-    aux = selectEmailInDB(email)
+    aux = requests.get("http://127.0.0.1:5000/emailverify",
+                       params={"email": email}).reason
 
-    if (len(aux) == 0):
+    if (len(aux) == 2):
         requests.post("http://127.0.0.1:5000/register", params={"name": name, "email": email, "password": bcrypt.hashpw(
             str.encode(password), bcrypt.gensalt())})
         context(loginStrategy())
@@ -33,7 +56,6 @@ def registerStrategy():
 
 
 def loginStrategy():
-    from db.selectInDB import selectPasswordInDB, selectNameInDB
     from clear import clear
     import globals
     clear()
