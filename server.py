@@ -103,7 +103,8 @@ def viewBalanceStrategy(email):
 
     connectDatabase().close()
     print(fetchSelectCB[0])
-    return "Saldo:", float(fetchSelectCB[0])
+    return "Saldo:", float(str(fetchSelectCB).replace(
+        "((", "").replace(",),)", ""))
 
 
 def doWithdrawStrategy(email, withdrawValue):
