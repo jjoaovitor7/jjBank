@@ -87,6 +87,34 @@ def selectInDB():
     dbConnection.close()
 
 
+def selectNameInDB(_email):
+    dbConnection = pymysql.connect(
+        host="localhost", user="root", password="123456789", database="test")
+    cursor = dbConnection.cursor()
+
+    selectTableUsersName = f"""SELECT NOME FROM USERS WHERE EMAIL = "{_email}";"""
+
+    cursor.execute(selectTableUsersName)
+    fetch = cursor.fetchall()
+
+    dbConnection.close()
+    return fetch
+
+
+def selectPasswordInDB(_email):
+    dbConnection = pymysql.connect(
+        host="localhost", user="root", password="123456789", database="test")
+    cursor = dbConnection.cursor()
+
+    selectTableUsersEP = f"""SELECT SENHA FROM USERS WHERE EMAIL = "{_email}";"""
+
+    cursor.execute(selectTableUsersEP)
+    fetch = cursor.fetchall()
+
+    dbConnection.close()
+    return fetch
+
+
 def selectEmailInDB(_email):
     dbConnection = pymysql.connect(
         host="localhost", user="root", password="123456789", database="test")
@@ -198,6 +226,16 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif (self.path.startswith("/emailverify")):
             query = parse_qs(urlparse(self.path).query)
             self.send_response(200, selectEmailInDB(query['email'][0]))
+            self.end_headers()
+
+        elif (self.path.startswith("/gethashforverification")):
+            query = parse_qs(urlparse(self.path).query)
+            self.send_response(200, selectPasswordInDB(query['email'][0]))
+            self.end_headers()
+
+        elif (self.path.startswith("/getname")):
+            query = parse_qs(urlparse(self.path).query)
+            self.send_response(200, selectNameInDB(query['email'][0]))
             self.end_headers()
 
     def do_POST(self):

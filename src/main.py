@@ -2,33 +2,6 @@ import bcrypt
 import requests
 import pymysql
 
-def selectNameInDB(_email):
-    dbConnection = pymysql.connect(
-        host="localhost", user="root", password="123456789", database="test")
-    cursor = dbConnection.cursor()
-
-    selectTableUsersName = f"""SELECT NOME FROM USERS WHERE EMAIL = "{_email}";"""
-
-    cursor.execute(selectTableUsersName)
-    fetch = cursor.fetchall()
-
-    dbConnection.close()
-    return fetch
-
-
-def selectPasswordInDB(_email):
-    dbConnection = pymysql.connect(
-        host="localhost", user="root", password="123456789", database="test")
-    cursor = dbConnection.cursor()
-
-    selectTableUsersEP = f"""SELECT SENHA FROM USERS WHERE EMAIL = "{_email}";"""
-
-    cursor.execute(selectTableUsersEP)
-    fetch = cursor.fetchall()
-
-    dbConnection.close()
-    return fetch
-
 
 def context(strategy):
     return strategy
@@ -64,9 +37,9 @@ def loginStrategy():
     email = str(input("E-mail: "))
     password = str(input("Senha: "))
 
-    if (bcrypt.checkpw(str.encode(password), str.encode(str(selectPasswordInDB(email)).replace(
+    if (bcrypt.checkpw(str.encode(password), str.encode(str(requests.get("http://127.0.0.1:5000/gethashforverification", params={"email": email}).reason).replace(
             "((", "").replace(",),)", "").replace("\"", "").replace("\"", "").replace("b'", "").replace("'", "")))):
-        globals.NAME = str(selectNameInDB(email)).replace(
+        globals.NAME = str(requests.get("http://127.0.0.1:5000/getname", params={"email": email}).reason).replace(
             "(('", "").replace("',),)", "")
         globals.EMAIL = email
 
