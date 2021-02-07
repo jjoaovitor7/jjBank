@@ -11,128 +11,48 @@ PORT = 5000
 usuarios_logados = []
 
 
-def createTables():
-    # pymsql.connect("host", "user", "password", "db")
-    dbConnection = pymysql.connect(
-        host="localhost", user="root", password="123456789", database="test")
-    cursor = dbConnection.cursor()
-
-    tableUsers = """CREATE TABLE IF NOT EXISTS USERS (
-        ID int(5) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        NOME varchar(100) NOT NULL,
-        EMAIL varchar(50) NOT NULL,
-        SENHA varchar(65) NOT NULL,
-        FK_ID_BANCO int(5) DEFAULT NULL,
-        CONSTRAINT FK_1 FOREIGN KEY (`FK_ID_BANCO`) REFERENCES `CONTASBANCARIAS`(`ID`) ON UPDATE CASCADE
-    );
-    """
-
-    tableContasBancarias = """CREATE TABLE IF NOT EXISTS CONTASBANCARIAS (
-        ID int NOT NULL AUTO_INCREMENT,
-        SALDO int(15) DEFAULT "0",
-        PRIMARY KEY (ID)
-    );
-    """
-
-    # tableUsers = """DROP TABLE USERS;"""
-    # tableContasBancarias = """DROP TABLE CONTASBANCARIAS;"""
-
-    cursor.execute(tableContasBancarias)
-    cursor.execute(tableUsers)
-
-    dbConnection.close()
-
-
-def showTables():
-    dbConnection = pymysql.connect(
-        host="localhost", user="root", password="123456789", database="test")
-    cursor = dbConnection.cursor()
-
-    tables = """SHOW TABLES;"""
-
-    cursor.execute(tables)
-    print(cursor.fetchall())
-
-    dbConnection.close()
-
-
-def dropTables():
-    dbConnection = pymysql.connect(
-        host="localhost", user="root", password="123456789", database="test")
-    cursor = dbConnection.cursor()
-
-    tableUsers = """DROP TABLE USERS;"""
-    tableContasBancarias = """DROP TABLE CONTASBANCARIAS;"""
-
-    cursor.execute(tableUsers)
-    cursor.execute(tableContasBancarias)
-
-    dbConnection.close()
-
-
-def selectInDB():
-    dbConnection = pymysql.connect(
-        host="localhost", user="root", password="123456789", database="test")
-    cursor = dbConnection.cursor()
-
-    selectTableUsers = f"""SELECT * FROM USERS;"""
-    selectTableContasBancarias = f"""SELECT * FROM CONTASBANCARIAS;"""
-
-    cursor.execute(selectTableUsers)
-    print(cursor.fetchall())
-
-    cursor.execute(selectTableContasBancarias)
-    print(cursor.fetchall())
-
-    dbConnection.close()
+def connectDatabase():
+    return pymysql.connect(host="localhost", user="root", password="123456789", database="test")
 
 
 def selectNameInDB(_email):
-    dbConnection = pymysql.connect(
-        host="localhost", user="root", password="123456789", database="test")
-    cursor = dbConnection.cursor()
+    cursor = connectDatabase().cursor()
 
     selectTableUsersName = f"""SELECT NOME FROM USERS WHERE EMAIL = "{_email}";"""
 
     cursor.execute(selectTableUsersName)
     fetch = cursor.fetchall()
 
-    dbConnection.close()
+    connectDatabase().close()
     return fetch
 
 
 def selectPasswordInDB(_email):
-    dbConnection = pymysql.connect(
-        host="localhost", user="root", password="123456789", database="test")
-    cursor = dbConnection.cursor()
+    cursor = connectDatabase().cursor()
 
     selectTableUsersEP = f"""SELECT SENHA FROM USERS WHERE EMAIL = "{_email}";"""
 
     cursor.execute(selectTableUsersEP)
     fetch = cursor.fetchall()
 
-    dbConnection.close()
+    connectDatabase().close()
     return fetch
 
 
 def selectEmailInDB(_email):
-    dbConnection = pymysql.connect(
-        host="localhost", user="root", password="123456789", database="test")
-    cursor = dbConnection.cursor()
+    cursor = connectDatabase().cursor()
 
     selectTableUsersEmail = f"""SELECT * FROM USERS WHERE EMAIL = "{_email}";"""
 
     cursor.execute(selectTableUsersEmail)
     fetch = cursor.fetchall()
 
-    dbConnection.close()
+    connectDatabase().close()
     return fetch
 
 
 def register(_name, _email, _password):
-    dbConnection = pymysql.connect(
-        host="localhost", user="root", password="123456789", database="test")
-    cursor = dbConnection.cursor()
+    cursor = connectDatabase().cursor()
 
     insertContaBancaria = f"""INSERT INTO CONTASBANCARIAS () VALUES ();"""
     insertUser = f"""INSERT INTO USERS (`NOME`, `EMAIL`, `FK_ID_BANCO`, SENHA) VALUES ("{_name}", "{_email}", LAST_INSERT_ID(), "{_password}");"""
@@ -142,13 +62,11 @@ def register(_name, _email, _password):
     cursor.execute(insertUser)
     cursor.execute(commit)
 
-    dbConnection.close()
+    connectDatabase().close()
 
 
 def doDepositStrategy(email, depositValue):
-    dbConnection = pymysql.connect(
-        host="localhost", user="root", password="123456789", database="test")
-    cursor = dbConnection.cursor()
+    cursor = connectDatabase().cursor()
 
     selectID = f"""SELECT ID FROM USERS WHERE EMAIL = "{email}";"""
     cursor.execute(selectID)
@@ -167,13 +85,11 @@ def doDepositStrategy(email, depositValue):
     cursor.execute(insertContaBancaria)
     cursor.execute(commit)
 
-    dbConnection.close()
+    connectDatabase().close()
 
 
 def viewBalanceStrategy(email):
-    dbConnection = pymysql.connect(
-        host="localhost", user="root", password="123456789", database="test")
-    cursor = dbConnection.cursor()
+    cursor = connectDatabase().cursor()
 
     selectID = f"""SELECT ID FROM USERS WHERE EMAIL = "{email}";"""
     cursor.execute(selectID)
@@ -185,16 +101,13 @@ def viewBalanceStrategy(email):
     cursor.execute(selectContaBancaria)
     fetchSelectCB = cursor.fetchall()
 
-    dbConnection.close()
-
-    return "Saldo:", float(str(fetchSelectCB).replace(
-        "((", "").replace(",),)", ""))
+    connectDatabase().close()
+    print(fetchSelectCB[0])
+    return "Saldo:", float(fetchSelectCB[0])
 
 
 def doWithdrawStrategy(email, withdrawValue):
-    dbConnection = pymysql.connect(
-        host="localhost", user="root", password="123456789", database="test")
-    cursor = dbConnection.cursor()
+    cursor = connectDatabase().cursor()
 
     selectID = f"""SELECT ID FROM USERS WHERE EMAIL = "{email}";"""
     cursor.execute(selectID)
@@ -208,12 +121,12 @@ def doWithdrawStrategy(email, withdrawValue):
         "((", "").replace(",),)", "")) - float(withdrawValue)
 
     insertContaBancaria = f"""UPDATE CONTASBANCARIAS SET SALDO={withdraw} WHERE ID = {fetchID};"""
-    commit = f"""COMMIT;"""
+    commit = "COMMIT;"
 
     cursor.execute(insertContaBancaria)
     cursor.execute(commit)
 
-    dbConnection.close()
+    connectDatabase().close()
 
 
 class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):

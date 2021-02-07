@@ -31,8 +31,7 @@ Sistema de Banco fictício com as funcionalidades:
   $ git clone https://github.com/jjoaovitor7/jjBank
 
   // Entrar no diretório
-  $ cd jjBank
-  $ cd dist
+  $ cd jjBank/dist
 
   // (Linux)
   // Executar o servidor
