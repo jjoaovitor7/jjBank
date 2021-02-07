@@ -12,7 +12,7 @@ usuarios_logados = []
 
 
 def connectDatabase():
-    return pymysql.connect(host="localhost", user="root", password="123456789", database="test")
+    return pymysql.connect(host="localhost", user="root", password="123456789", database="TEST")
 
 
 def selectNameInDB(_email):
@@ -56,7 +56,7 @@ def register(_name, _email, _password):
 
     insertContaBancaria = f"""INSERT INTO CONTASBANCARIAS () VALUES ();"""
     insertUser = f"""INSERT INTO USERS (`NOME`, `EMAIL`, `FK_ID_BANCO`, SENHA) VALUES ("{_name}", "{_email}", LAST_INSERT_ID(), "{_password}");"""
-    commit = f"""COMMIT;"""
+    commit = "COMMIT;"
 
     cursor.execute(insertContaBancaria)
     cursor.execute(insertUser)
@@ -71,16 +71,15 @@ def doDepositStrategy(email, depositValue):
     selectID = f"""SELECT ID FROM USERS WHERE EMAIL = "{email}";"""
     cursor.execute(selectID)
     fetch = cursor.fetchall()
-    fetchID = int(str(fetch).replace("((", "").replace(",),)", ""))
+    fetchID = int(fetch[0][0])
 
     selectSaldo = f"""SELECT SALDO FROM CONTASBANCARIAS WHERE ID = {fetchID};"""
     cursor.execute(selectSaldo)
     fetchSaldo = cursor.fetchall()
-    deposit = float(str(fetchSaldo).replace(
-        "((", "").replace(",),)", "")) + float(depositValue)
+    deposit = float(fetchSaldo[0][0]) + float(depositValue)
 
     insertContaBancaria = f"""UPDATE CONTASBANCARIAS SET SALDO="{deposit}" WHERE ID = {fetchID};"""
-    commit = f"""COMMIT;"""
+    commit = "COMMIT;"
 
     cursor.execute(insertContaBancaria)
     cursor.execute(commit)
@@ -94,7 +93,7 @@ def viewBalanceStrategy(email):
     selectID = f"""SELECT ID FROM USERS WHERE EMAIL = "{email}";"""
     cursor.execute(selectID)
     fetch = cursor.fetchall()
-    fetchID = int(str(fetch).replace("((", "").replace(",),)", ""))
+    fetchID = int(fetch[0][0])
 
     selectContaBancaria = f"""SELECT SALDO FROM CONTASBANCARIAS WHERE ID = {fetchID};"""
 
@@ -102,9 +101,7 @@ def viewBalanceStrategy(email):
     fetchSelectCB = cursor.fetchall()
 
     connectDatabase().close()
-    print(fetchSelectCB[0])
-    return "Saldo:", float(str(fetchSelectCB).replace(
-        "((", "").replace(",),)", ""))
+    return "Saldo:", float(fetchSelectCB[0][0])
 
 
 def doWithdrawStrategy(email, withdrawValue):
@@ -113,13 +110,12 @@ def doWithdrawStrategy(email, withdrawValue):
     selectID = f"""SELECT ID FROM USERS WHERE EMAIL = "{email}";"""
     cursor.execute(selectID)
     fetch = cursor.fetchall()
-    fetchID = int(str(fetch).replace("((", "").replace(",),)", ""))
+    fetchID = int(fetch[0][0])
 
     selectSaldo = f"""SELECT SALDO FROM CONTASBANCARIAS WHERE ID = {fetchID};"""
     cursor.execute(selectSaldo)
     fetchSaldo = cursor.fetchall()
-    withdraw = float(str(fetchSaldo).replace(
-        "((", "").replace(",),)", "")) - float(withdrawValue)
+    withdraw = float(fetchSaldo[0][0]) - float(withdrawValue)
 
     insertContaBancaria = f"""UPDATE CONTASBANCARIAS SET SALDO={withdraw} WHERE ID = {fetchID};"""
     commit = "COMMIT;"
