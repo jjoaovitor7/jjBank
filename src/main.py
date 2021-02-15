@@ -1,6 +1,8 @@
-import bcrypt
+import re
 import requests
+import bcrypt
 import pymysql
+from clear import clear
 
 
 def context(strategy):
@@ -8,7 +10,6 @@ def context(strategy):
 
 
 def registerStrategy():
-    from clear import clear
     clear()
     print("-----CADASTRO-----")
 
@@ -16,16 +17,20 @@ def registerStrategy():
     email = str(input("E-mail: "))
     password = str(input("Senha: "))
 
-    aux = requests.get("http://127.0.0.1:5000/emailverify",
-                       params={"email": email}).reason
-
-    if (len(aux) == 2):
-        requests.post("http://127.0.0.1:5000/register", params={"name": name, "email": email, "password": bcrypt.hashpw(
-            str.encode(password), bcrypt.gensalt())})
-        context(loginStrategy())
+    regexEmailValidator = re.compile(".+@.+\..+")
+    if (regexEmailValidator.match(email) == None):
+        print("Email inválido!")
     else:
-        clear()
-        print("Esse e-mail já está cadastrado no sistema.\n")
+        aux = requests.get("http://127.0.0.1:5000/emailverify",
+                           params={"email": email}).reason
+
+        if (len(aux) == 2):
+            requests.post("http://127.0.0.1:5000/register", params={"name": name, "email": email, "password": bcrypt.hashpw(
+                str.encode(password), bcrypt.gensalt())})
+            context(loginStrategy())
+        else:
+            clear()
+            print("Esse e-mail já está cadastrado no sistema.\n")
 
 
 def loginStrategy():
