@@ -12,92 +12,68 @@ usuarios_logados = []
 
 
 def connectDatabase():
-    return pymysql.connect(host="localhost", user="root", password="123456789", database="TEST")
+    return pymysql.connect(host="localhost", user="root", password="123456789", database="test")
 
 
 def selectNameInDB(_email):
     cursor = connectDatabase().cursor()
-
-    selectTableUsersName = f"""SELECT NOME FROM USERS WHERE EMAIL = "{_email}";"""
-
-    cursor.execute(selectTableUsersName)
+    cursor.execute(f"""SELECT NOME FROM USERS WHERE EMAIL = "{_email}";""")
     fetch = cursor.fetchall()
-
     connectDatabase().close()
     return fetch
 
 
 def selectPasswordInDB(_email):
     cursor = connectDatabase().cursor()
-
-    selectTableUsersEP = f"""SELECT SENHA FROM USERS WHERE EMAIL = "{_email}";"""
-
-    cursor.execute(selectTableUsersEP)
+    cursor.execute(f"""SELECT SENHA FROM USERS WHERE EMAIL = "{_email}";""")
     fetch = cursor.fetchall()
-
     connectDatabase().close()
     return fetch
 
 
 def selectEmailInDB(_email):
     cursor = connectDatabase().cursor()
-
-    selectTableUsersEmail = f"""SELECT * FROM USERS WHERE EMAIL = "{_email}";"""
-
-    cursor.execute(selectTableUsersEmail)
+    cursor.execute(f"""SELECT * FROM USERS WHERE EMAIL = "{_email}";""")
     fetch = cursor.fetchall()
-
     connectDatabase().close()
     return fetch
 
 
 def register(_name, _email, _password):
     cursor = connectDatabase().cursor()
-
-    insertContaBancaria = f"""INSERT INTO CONTASBANCARIAS () VALUES ();"""
-    insertUser = f"""INSERT INTO USERS (`NOME`, `EMAIL`, `FK_ID_BANCO`, SENHA) VALUES ("{_name}", "{_email}", LAST_INSERT_ID(), "{_password}");"""
-    commit = "COMMIT;"
-
-    cursor.execute(insertContaBancaria)
-    cursor.execute(insertUser)
-    cursor.execute(commit)
-
+    cursor.execute("INSERT INTO CONTASBANCARIAS () VALUES ();")
+    cursor.execute(
+        f"""INSERT INTO USERS (`NOME`, `EMAIL`, `FK_ID_BANCO`, `SENHA`) VALUES ("{_name}", "{_email}", LAST_INSERT_ID(), "{_password}");""")
+    cursor.execute("COMMIT;")
     connectDatabase().close()
 
 
 def doDepositStrategy(email, depositValue):
     cursor = connectDatabase().cursor()
 
-    selectID = f"""SELECT ID FROM USERS WHERE EMAIL = "{email}";"""
-    cursor.execute(selectID)
+    cursor.execute(f"""SELECT ID FROM USERS WHERE EMAIL = "{email}";""")
     fetch = cursor.fetchall()
     fetchID = int(fetch[0][0])
 
-    selectSaldo = f"""SELECT SALDO FROM CONTASBANCARIAS WHERE ID = {fetchID};"""
-    cursor.execute(selectSaldo)
+    cursor.execute(
+        f"""SELECT SALDO FROM CONTASBANCARIAS WHERE ID = {fetchID};""")
     fetchSaldo = cursor.fetchall()
     deposit = float(fetchSaldo[0][0]) + float(depositValue)
 
-    insertContaBancaria = f"""UPDATE CONTASBANCARIAS SET SALDO="{deposit}" WHERE ID = {fetchID};"""
-    commit = "COMMIT;"
-
-    cursor.execute(insertContaBancaria)
-    cursor.execute(commit)
-
+    cursor.execute(
+        f"""UPDATE CONTASBANCARIAS SET SALDO="{deposit}" WHERE ID = {fetchID};""")
+    cursor.execute("COMMIT;")
     connectDatabase().close()
 
 
 def viewBalanceStrategy(email):
     cursor = connectDatabase().cursor()
-
-    selectID = f"""SELECT ID FROM USERS WHERE EMAIL = "{email}";"""
-    cursor.execute(selectID)
+    cursor.execute(f"""SELECT ID FROM USERS WHERE EMAIL = "{email}";""")
     fetch = cursor.fetchall()
     fetchID = int(fetch[0][0])
 
-    selectContaBancaria = f"""SELECT SALDO FROM CONTASBANCARIAS WHERE ID = {fetchID};"""
-
-    cursor.execute(selectContaBancaria)
+    cursor.execute(
+        f"""SELECT SALDO FROM CONTASBANCARIAS WHERE ID = {fetchID};""")
     fetchSelectCB = cursor.fetchall()
 
     connectDatabase().close()
@@ -107,22 +83,55 @@ def viewBalanceStrategy(email):
 def doWithdrawStrategy(email, withdrawValue):
     cursor = connectDatabase().cursor()
 
-    selectID = f"""SELECT ID FROM USERS WHERE EMAIL = "{email}";"""
-    cursor.execute(selectID)
+    cursor.execute(f"""SELECT ID FROM USERS WHERE EMAIL = "{email}";""")
     fetch = cursor.fetchall()
     fetchID = int(fetch[0][0])
 
-    selectSaldo = f"""SELECT SALDO FROM CONTASBANCARIAS WHERE ID = {fetchID};"""
-    cursor.execute(selectSaldo)
+    cursor.execute(
+        f"""SELECT SALDO FROM CONTASBANCARIAS WHERE ID = {fetchID};""")
     fetchSaldo = cursor.fetchall()
     withdraw = float(fetchSaldo[0][0]) - float(withdrawValue)
 
-    insertContaBancaria = f"""UPDATE CONTASBANCARIAS SET SALDO={withdraw} WHERE ID = {fetchID};"""
-    commit = "COMMIT;"
+    cursor.execute(
+        f"""UPDATE CONTASBANCARIAS SET SALDO={withdraw} WHERE ID = {fetchID};""")
+    cursor.execute("COMMIT;")
+    connectDatabase().close()
 
-    cursor.execute(insertContaBancaria)
-    cursor.execute(commit)
 
+def doTransferStrategy(emailOrigin, transferValue, emailTransfer):
+    cursor = connectDatabase().cursor()
+
+    # retirando o dinheiro a ser transferido
+    # TODO: verificar se a conta existe
+    cursor.execute(
+        f"""SELECT FK_ID_BANCO FROM USERS WHERE EMAIL = "{emailOrigin}";""")
+    fetch = cursor.fetchall()
+    fetchContaBancaria = int(fetch[0][0])
+
+    cursor.execute(
+        f"""SELECT SALDO FROM CONTASBANCARIAS WHERE ID = {fetchContaBancaria};""")
+    fetchSaldo = cursor.fetchall()
+    transfer = float(fetchSaldo[0][0]) - float(transferValue)
+
+    cursor.execute(
+        f"""UPDATE CONTASBANCARIAS SET SALDO={transfer} WHERE ID = {fetchContaBancaria};""")
+    cursor.execute("COMMIT;")
+
+    # adicionando na conta
+    # TODO: verificar se a conta existe
+    cursor.execute(
+        f"""SELECT FK_ID_BANCO FROM USERS WHERE EMAIL = "{emailTransfer}";""")
+    fetch = cursor.fetchall()
+    fetchContaBancariaTransfer = int(fetch[0][0])
+
+    cursor.execute(
+        f"""SELECT SALDO FROM CONTASBANCARIAS WHERE ID = {fetchContaBancariaTransfer};""")
+    fetchSaldoTransfer = cursor.fetchall()
+    transfer_ = float(fetchSaldoTransfer[0][0]) + float(transferValue)
+
+    cursor.execute(
+        f"""UPDATE CONTASBANCARIAS SET SALDO={transfer_} WHERE ID = {fetchContaBancariaTransfer};""")
+    cursor.execute("COMMIT;")
     connectDatabase().close()
 
 
@@ -161,7 +170,13 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
 
-        elif (self.path.endswith("/verify")):
+        elif (self.path.startswith("/register")):
+            query = parse_qs(urlparse(self.path).query)
+            register(query['name'][0], query['email'][0], query['password'][0])
+            self.send_response(200)
+            self.end_headers()
+
+        elif (self.path.startswith("/verify")):
             self.data_string = self.rfile.read(
                 int(self.headers['Content-Length']))
 
@@ -182,6 +197,12 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif (self.path.startswith("/withdraw")):
             query = parse_qs(urlparse(self.path).query)
             doWithdrawStrategy(query['email'][0], query['withdrawValue'][0])
+            self.send_response(200)
+            self.end_headers()
+
+        elif (self.path.startswith("/transfer")):
+            query = parse_qs(urlparse(self.path).query)
+            doTransferStrategy(query['emailOrigin'][0], query['transferValue'][0],  query['emailTransfer'][0])
             self.send_response(200)
             self.end_headers()
 

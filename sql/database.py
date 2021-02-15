@@ -7,7 +7,6 @@ def connectDatabase():
 
 def createTables():
     cursor = connectDatabase().cursor()
-
     tableUsers = """CREATE TABLE IF NOT EXISTS USERS (
         ID int(5) NOT NULL AUTO_INCREMENT PRIMARY KEY,
         NOME varchar(100) NOT NULL,
@@ -27,28 +26,21 @@ def createTables():
 
     cursor.execute(tableContasBancarias)
     cursor.execute(tableUsers)
-
     connectDatabase().close()
 
 
 def showTables():
     cursor = connectDatabase().cursor()
-
-    tables = """SHOW TABLES;"""
-
-    cursor.execute(tables)
+    cursor.execute("SHOW TABLES;")
     print(cursor.fetchall())
-
     connectDatabase().close()
 
 
 def dropTables():
     cursor = connectDatabase().cursor()
-
-    tableUsers = """DROP TABLE USERS;"""
-    tableContasBancarias = """DROP TABLE CONTASBANCARIAS;"""
-
-    cursor.execute(tableUsers)
-    cursor.execute(tableContasBancarias)
-
+    cursor.execute("DROP TABLE USERS;")
+    cursor.execute("DROP TABLE CONTASBANCARIAS;")
     connectDatabase().close()
+
+# createTables()
+# showTables()

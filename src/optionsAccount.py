@@ -19,7 +19,8 @@ def options():
               + "\n2-Realizar Depósito"
               + "\n3-Visualizar Saldo"
               + "\n4-Realizar Saque"
-              + "\n5-Sair")
+              + "\n5-Realizar Transferência"
+              + "\n6-Sair")
 
         try:
             condicao2 = int(input(":"))
@@ -46,10 +47,18 @@ def options():
                 clear()
                 withdrawValue = float(input("Saque (R$): "))
                 requests.post("http://127.0.0.1:5000/withdraw",
-                             params={"email": globals.EMAIL, "withdrawValue": withdrawValue})
+                              params={"email": globals.EMAIL, "withdrawValue": withdrawValue})
                 print("\n")
 
             elif (condicao2 == 5):
+                clear()
+                transferEmail = str(input("E-mail da Conta: "))
+                transferValue = float(input("Valor a ser transferido: "))
+                requests.post("http://127.0.0.1:5000/transfer",
+                              params={"emailOrigin": globals.EMAIL, "transferValue": transferValue, "emailTransfer": transferEmail, })
+                print("\n")
+
+            elif (condicao2 == 6):
                 exec = False
 
                 try:
