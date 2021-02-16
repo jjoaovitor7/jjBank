@@ -39,35 +39,42 @@ def loginStrategy():
     clear()
     print("-----LOGIN-----")
 
-    email = str(input("E-mail: "))
-    password = str(input("Senha: "))
+    try:
+        email = str(input("E-mail: "))
+        password = str(input("Senha: "))
 
-    if (bcrypt.checkpw(str.encode(password), str.encode(str(requests.get("http://127.0.0.1:5000/gethashforverification", params={"email": email}).reason).replace(
-            "((", "").replace(",),)", "").replace("\"", "").replace("\"", "").replace("b'", "").replace("'", "")))):
-        globals.NAME = str(requests.get("http://127.0.0.1:5000/getname", params={"email": email}).reason).replace(
-            "(('", "").replace("',),)", "")
-        globals.EMAIL = email
+        if (bcrypt.checkpw(str.encode(password), str.encode(str(requests.get("http://127.0.0.1:5000/gethashforverification", params={"email": email}).reason).replace(
+                "((", "").replace(",),)", "").replace("\"", "").replace("\"", "").replace("b'", "").replace("'", "")))):
+            globals.NAME = str(requests.get("http://127.0.0.1:5000/getname", params={"email": email}).reason).replace(
+                "(('", "").replace("',),)", "")
+            globals.EMAIL = email
 
-        try:
-            PORT = 5000
-            token = requests.post(f"http://127.0.0.1:{PORT}/").reason
-            globals.TOKEN = token
+            try:
+                PORT = 5000
+                token = requests.post(f"http://127.0.0.1:{PORT}/").reason
+                globals.TOKEN = token
 
-            verify = requests.post(
-                f"http://127.0.0.1:{PORT}/verify", globals.TOKEN).reason
+                verify = requests.post(
+                    f"http://127.0.0.1:{PORT}/verify", globals.TOKEN).reason
 
-            if (verify):
-                clear()
-                print(
-                    f"Usuário {globals.NAME} logado com o e-mail \"{globals.EMAIL}\".")
+                if (verify):
+                    clear()
+                    print(
+                        f"Usuário {globals.NAME} logado com o e-mail \"{globals.EMAIL}\".")
 
-                from optionsAccount import options
-                options()
-        except Exception as e:
-            print(e)
+                    from optionsAccount import options
+                    try:
+                        options()
+                    except KeyboardInterrupt:
+                        print("Programa interrompido.")
+            except Exception as e:
+                print(e)
 
-    else:
-        print("Senha inválida ou e-mail inválido.")
+        else:
+            print("Senha inválida ou e-mail inválido.")
+
+    except Exception as e:
+        print("Erro na conexão com o servidor.")
 
 
 exec = True
@@ -79,19 +86,23 @@ while (exec):
           + "\n3-Sair")
 
     try:
-        condicao1 = int(input(":"))
+        try:
+            condicao1 = int(input(":"))
 
-        if (condicao1 == 1):
-            context(registerStrategy())
-        elif (condicao1 == 2):
-            context(loginStrategy())
-        elif (condicao1 == 3):
-            exec = False
-            break
-        else:
-            print("Opção inválida.")
-    except ValueError as error:
-        if (str(error) == "Invalid salt"):
-            print("Senha inválida ou e-mail inválido.\n")
-        else:
-            print("Opção inválida.\n")
+            if (condicao1 == 1):
+                context(registerStrategy())
+            elif (condicao1 == 2):
+                context(loginStrategy())
+            elif (condicao1 == 3):
+                exec = False
+                break
+            else:
+                print("Opção inválida.")
+        except ValueError as error:
+            if (str(error) == "Invalid salt"):
+                print("Senha inválida ou e-mail inválido.\n")
+            else:
+                print("Opção inválida.\n")
+    except KeyboardInterrupt:
+        print("\nPrograma interrompido.")
+        break
